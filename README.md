@@ -98,3 +98,27 @@ docker exec container_name ls
 // executar o bash e manter conexão com modo interativo e tty
 docker exec -it container_name bash
 ```
+
+## Bind Mounts
+
+O comando -v reflete um arquivo do seu pc local para um container. Dessa forma você mantem a integridade do arquivo caso o container não exista mais.
+
+```docker
+docker run -d --name nginx -p 8080:80 -v ~/www/docker/html/:/usr/share/nginx/html nginx
+```
+
+Existe também uma forma mais moderna para o mesmo comando usando as flags **_--mount, type e source_**.
+
+```docker
+docker run -d --name nginx -p 8080:80 --mount type=bind,source="$(pwd)"/html/,target=/usr/share/nginx/html nginx
+```
+
+Existem diferenças entre usar o **_-v_** ou **_--mount_**. A principal delas é que o **_-v_** cria um arquivo ou diretório caso não exista no pc local. A exemplo disso, um comando que cria um dir x que não existia no dir html.
+
+```docker
+docker run -d -v "$(pwd)"/html/x:/usr/share/nginx/html nginx
+```
+
+O **_--mount_** dispara um erro dizendo basicamente que não existe diretório x na sua máquina local para ser montado no container.
+
+## Trabalhando com volumes
