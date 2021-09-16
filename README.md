@@ -101,7 +101,7 @@ docker exec -it container_name bash
 
 ## Bind Mounts
 
-O comando -v reflete um arquivo do seu pc local para um container. Dessa forma você mantem a integridade do arquivo caso o container não exista mais.
+O comando -v reflete um arquivo da sua máquina para um container. Dessa forma você mantem a integridade do arquivo caso o container não exista mais.
 
 ```docker
 docker run -d --name nginx -p 8080:80 -v ~/www/docker/html/:/usr/share/nginx/html nginx
@@ -113,12 +113,48 @@ Existe também uma forma mais moderna para o mesmo comando usando as flags **_--
 docker run -d --name nginx -p 8080:80 --mount type=bind,source="$(pwd)"/html/,target=/usr/share/nginx/html nginx
 ```
 
-Existem diferenças entre usar o **_-v_** ou **_--mount_**. A principal delas é que o **_-v_** cria um arquivo ou diretório caso não exista no pc local. A exemplo disso, um comando que cria um dir x que não existia no dir html.
+Existem diferenças entre usar o **_-v_** ou **_--mount_**. A principal delas é que o **_-v_** cria um arquivo ou diretório caso não exista na sua máquina. A exemplo disso, um comando que cria um dir x que não existia no dir html.
 
 ```docker
 docker run -d -v "$(pwd)"/html/x:/usr/share/nginx/html nginx
 ```
 
-O **_--mount_** dispara um erro dizendo basicamente que não existe diretório x na sua máquina local para ser montado no container.
+O **_--mount_** dispara um erro dizendo basicamente que não existe diretório x na sua máquina para ser montado no container.
 
 ## Trabalhando com volumes
+
+Quando queremos persistir arquivos dos nossos containers em uma máquina, seja ela local ou não, quando queremos compartilhar esses arquivos entre containers, manter o mesmo tipo de filesystem (Linux Virtual Machine - que o Docker usa), e principalmente quando não sabemos ou não temos controle dos caminhos dos diretórios, usamos o conceito de volume.
+
+Criando um volume
+
+```docker
+docker volume create volume_name
+```
+
+Verificando as configurações de um volume
+
+```docker
+docker volume inspect volume_name
+```
+
+Mapeando um volume para dentro de uma pasta /app no container
+
+```docker
+docker run --name nginx -d --mount type=volume,source=volume_name,target=/app nginx
+```
+
+Matar tudo o que não está sendo usado dos volumes na sua máquina. Isso evita lotação de espaço na sua máquina.
+
+```docker
+docker volume prune
+```
+
+## Trabalhado com imagens
+
+Podemos criar containers a partir de imagens que ficam hospedadas em algum container registry. Por padrão o docker usar o container registry Docker Hub, mas isso não impede de usar outros containers registry ou até o seu próprio.
+
+Baixando uma imagem para a sua máquina
+
+```docker
+docker pull imagem_name
+```
