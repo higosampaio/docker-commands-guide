@@ -156,5 +156,23 @@ Podemos criar containers a partir de imagens que ficam hospedadas em algum conta
 Baixando uma imagem para a sua máquina
 
 ```docker
-docker pull imagem_name
+docker pull image_name
+```
+
+Listando as imagens existentes
+
+```docker
+docker images
+```
+
+Removendo imagens. Os : são opcionais e podem indicar uma tag específica que representa a versão da imagem. Por padrão a tag é latest, e se não escrita no comando, ela fica implícita.
+
+```docker
+docker rmi image_name:latest
+```
+
+Gerando uma imagem. O **_-t_** define qual o nome do repositorio que você quer colocar e o **_._** indica em qual pasta do seu computador existe o Dockerfile.
+
+```docker
+docker build -t higosampa/nginx-com-vim .
 ```
