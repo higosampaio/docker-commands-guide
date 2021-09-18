@@ -171,6 +171,8 @@ Removendo imagens. Os : são opcionais e podem indicar uma tag específica que r
 docker rmi image_name:latest
 ```
 
+## Dockerfile
+
 Gerando uma imagem. O **_-t_** define qual o nome do repositorio que você quer colocar e o **_._** indica em qual pasta do seu computador existe o Dockerfile.
 
 ```docker
