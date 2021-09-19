@@ -165,11 +165,14 @@ FROM ubuntu:latest
 ENTRYPOINT [ "echo", "Hello" ]
 
 CMD [ "World" ]
+
+# output: Hello World
 ```
 
 Podemos altearar o CMD da seguinte forma:
 
 ```docker
 docker run --rm higosampa/hello X
-# Output: Hello X
+
+# output: Hello X
 ```
