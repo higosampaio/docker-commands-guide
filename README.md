@@ -4,15 +4,15 @@
 <details open="open">
   <summary>Table of Contents</summary>
   <ol>
-    <li><a href="#comandos-basicos">Comandos básicos</a></li>
+    <li><a href="#comandos-básicos">Comandos básicos</a></li>
     <li><a href="#hello-world">Hello World</a></li>
     <li><a href="#executando-o-ubuntu">Executando o Ubuntu</a></li>
-    <li><a href="#publicando-portas-com-o-nginx">Publicando portas com o nginx</a></li>
+    <li><a href="#publicando-portas-com-o-nginx">Publicando portas com nginx</a></li>
     <li><a href="#executar-diretamente-comandos-em-um-container">Executar diretamente comandos em um container</a></li>
     <li><a href="#bind-mounts">Bind Mounts</a></li>
     <li><a href="#trabalhando-com-volumes">Trabalhando com volumes</a></li>
     <li><a href="#trabalhando-com-imagens">Trabalhando com imagens</a></li>
-    <li><a href="#criando-uma-imagem-com-dockerfile">Criando uma imagem com Dockerfile</a></li>
+    <li><a href="#criando-imagem-com-o-dockerfile">Criando imagem com Dockerfile</a></li>
     <li><a href="#entrypoint-vs-cmd">ENTRYPOINT vs CMD</a></li>
   </ol>
 </details>
@@ -130,7 +130,7 @@ docker run --name nginx -d --mount type=volume,source=volume_name,target=/app ng
 docker volume prune
 ```
 
-## Trabalhado com imagens
+## Trabalhando com imagens
 
 Podemos criar containers a partir de imagens que ficam hospedadas em algum container registry. Por padrão o docker usar o container registry Docker Hub, mas isso não o impede de usar outros containers registry ou até o seu próprio.
 
