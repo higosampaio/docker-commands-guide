@@ -157,7 +157,7 @@ docker build -t higosampa/nginx-com-vim .
 
 O ENTRYPOINT e o CMD são comandos que executam ações ao rodar a imagem. A diferença é que o CMD é um comando variável, podendo ser alterado em tempo de execução e o ENTRYPOINT é um comando fixo. O CMD pode ser usado como parâmetro do ENTRYPOINT.
 
-Criando uma imagem baseada no ubuntu e printamos uma mensagem "Hello World".
+Criando uma imagem baseada no ubuntu e printando uma mensagem "Hello World".
 
 ```docker
 FROM ubuntu:latest
