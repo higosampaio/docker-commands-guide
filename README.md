@@ -12,7 +12,7 @@
     <li><a href="#bind-mounts">Bind Mounts</a></li>
     <li><a href="#trabalhando-com-volumes">Trabalhando com volumes</a></li>
     <li><a href="#trabalhando-com-imagens">Trabalhando com imagens</a></li>
-    <li><a href="#criando-imagem-com-o-dockerfile">Criando imagem com Dockerfile</a></li>
+    <li><a href="#criando-imagem-com-o-dockerfile">Criando imagem com o Dockerfile</a></li>
     <li><a href="#entrypoint-vs-cmd">ENTRYPOINT vs CMD</a></li>
   </ol>
 </details>
@@ -153,22 +153,23 @@ Gerando uma imagem. O **_-t_** nomeia o _repository_ e o **_._** indica em qual 
 docker build -t higosampa/nginx-com-vim .
 ```
 
-Exemplo de um Dockerfile:
+## ENTRYPOINT vs CMD
+
+O ENTRYPOINT e o CMD são comandos que executam ações ao rodar a imagem. A diferença é que o CMD é um comando variável, podendo ser alterado em tempo de execução e o ENTRYPOINT é um comando fixo. O CMD pode ser usado como parâmetro do ENTRYPOINT.
+
+Criando uma imagem baseada no ubuntu e printamos uma mensagem "Hello World".
 
 ```docker
-# Iniciar um Dockerfile com uma imagem base para gerar o container
-FROM nginx:latest
+FROM ubuntu:latest
 
-# Definir o ponto de partida ao montar o container, você cairá no dir especificado
-WORKDIR /app
+ENTRYPOINT [ "echo", "Hello" ]
 
-# Comandos que serão executados ao montar o container
-RUN apt-get update && \
-    apt-get install vim -y
-
-# Copia arquivos da máquina para o container
-# O dir html está sendo copiado para dentro do container nginx e está fazendo um replace no dir html que já existia
-COPY html /usr/share/nginx/html
+CMD [ "World" ]
 ```
 
-## ENTRYPOINT vs CMD
+Podemos altearar o CMD da seguinte forma:
+
+```docker
+docker run --rm higosampa/hello X
+# Output: Hello X
+```
