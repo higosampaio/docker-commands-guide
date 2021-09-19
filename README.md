@@ -1,101 +1,92 @@
 # Docker Commands Guide
 
-Executa a imagem img_teste em um container. Se não existir ele cria um container e logo finaliza o processo porque não rodamos nenhum executável que o faria ficar ativo
+<!-- TABLE OF CONTENTS -->
+<details open="open">
+  <summary>Table of Contents</summary>
+  <ol>
+    <li><a href="#comandos-basicos">Comandos básicos</a></li>
+    <li><a href="#hello-world">Hello World</a></li>
+    <li><a href="#executando-o-ubuntu">Executando o Ubuntu</a></li>
+    <li><a href="#publicando-portas-com-o-nginx">Publicando portas com o nginx</a></li>
+    <li><a href="#executar-diretamente-comandos-em-um-container">Executar diretamente comandos em um container</a></li>
+    <li><a href="#bind-mounts">Bind Mounts</a></li>
+    <li><a href="#trabalhando-com-volumes">Trabalhando com volumes</a></li>
+    <li><a href="#trabalhando-com-imagens">Trabalhando com imagens</a></li>
+    <li><a href="#criando-uma-imagem-com-dockerfile">Criando uma imagem com Dockerfile</a></li>
+    <li><a href="#entrypoint-vs-cmd">ENTRYPOINT vs CMD</a></li>
+  </ol>
+</details>
+
+## Comandos básicos
 
 ```docker
-docker run img_teste
-```
-
-Lista todos os containers ativos
-
-```docker
+# Listar containers ativos
 docker ps
-```
 
-Lista todos os containers ativos e não ativos
-
-```docker
+# Listar todos os containers ativos e não ativos
 docker ps -a
+
+# Levantar um container
+docker start container_id
+
+# Parar um container
+docker stop container_id
+
+# Remover um container
+docker rm container_id
+
+# Remover com o -f (force) para o caso do container rodando
+docker rm container_id -f
+
+# Remover todos os containers de uma vez
+docker rm $(docker ps -a -q) -f
 ```
 
--i (modo interativo para manter o processo rodando)
--t (tty - para conseguir escrever coisas no terminal)
+## Hello World
+
+Ao rodar o seguinte comando, o docker procura na sua máquina uma imagem com o nome hello-world para rodar em um container. Caso a imagem não exista, o docker tenta procurar essa imagem no container registry e depois roda num container através do **_run_**.
 
 ```docker
-docker run -it ubuntu bash
+docker run hello-world
 ```
 
---rm (todo processo de container que subir, na hora que ele sair, o docker já remove ele)
+Esse hello-world é uma imagem que existe no container registry, portanto, o docker consegue fazer um pulling da imagem para a sua máquina e depois rodar.
+
+O comando **_docker run_** faz com que configurações de ENTRYPOINT ou CMD de uma imagem sejam executados. Em nosso caso, o ENTRYPOINT da hello-world apenas imprime uma mensagem e finaliza o processo.
+
+## Executando o Ubuntu
+
+Rodando o ubuntu em um container e executando o bash do linux. O **_-it_** ou **_-i -t_** são flags que vão permitir a sua interação no container, e o **_--rm_** permite remover automaticamente o container depois que sair dele.
 
 ```docker
 docker run -it --rm ubuntu bash
 ```
 
-Levantar um container
+- **_-i_** (modo interativo para manter o processo rodando)
+- **_-t_** (tty para conseguir escrever coisas no terminal)
+- **_--rm_** (para remover o container)
 
-```docker
-//Levantar com o id
-docker start container_id
+## Publicando portas com nginx
 
-// Levantar com o nome
-docker start container_name
-```
-
-Cria um container do tipo webserver nginx que só poderá ser acessado no contexto do docker, ou seja, pelos containers que estão rodando junto com o container do nginx
-
-```docker
-docker run nginx
-```
-
--p (publish - publica a porta que você quer apontar em relação a porta do container)
-8080:80 (aponta a porta 8080 da máquina para a porta 80 do container nginx)
-
-```docker
-docker run -p 8080:80 nginx
-```
-
--d (detached - libera o terminal depois que subir o container)
-
-```docker
-docker run -d -p 8080:80 nginx
-```
-
-Parar um container
-
-```docker
-// Parar com o id
-docker stop container_id
-
-// Parar com o nome
-docker stop container_name
-```
-
-Remover um container
-
-```docker
-// Remover com o id
-docker rm container_id
-
-// Remover com o nome
-docker rm container_name
-
-// Remover com o -f (force) para casos como o container rodando
-docker rm container_id -f
-```
-
-Nomear um container
+Criando um container do tipo webserver nginx que só poderá ser acessado no contexto do docker, ou seja, pelos containers que estão rodando junto com o container do nginx.
 
 ```docker
 docker run -d --name nginx -p 8080:80 nginx
 ```
 
-Executar comandos em um container
+- **_-d_** (detached - libera o terminal depois que subir o container)
+- **_--name_** (para nomear o container)
+- **_-p_** (aponta a porta 8080 da máquina para a porta 80 do container nginx)
+
+## Executar diretamente comandos em um container
+
+O comando exec permite rodar comandos da máquina que afetam diretamente arquivos que estão no escopo do container.
 
 ```docker
-// exec executa comandos em um container como o ls
+# Executar uma listagem de arquivos que está dentro do container
 docker exec container_name ls
 
-// executar o bash e manter conexão com modo interativo e tty
+# Executar o bash e manter conexão com modo interativo
 docker exec -it container_name bash
 ```
 
@@ -125,56 +116,59 @@ O **_--mount_** dispara um erro dizendo basicamente que não existe diretório x
 
 Quando queremos persistir arquivos dos nossos containers em uma máquina, seja ela local ou não, quando queremos compartilhar esses arquivos entre containers, manter o mesmo tipo de filesystem (Linux Virtual Machine - que o Docker usa), e principalmente quando não sabemos ou não temos controle dos caminhos dos diretórios, usamos o conceito de volume.
 
-Criando um volume
-
 ```docker
+# Criando um volume
 docker volume create volume_name
-```
 
-Verificando as configurações de um volume
-
-```docker
+# Verificando as configurações de um volume
 docker volume inspect volume_name
-```
 
-Mapeando um volume para dentro de uma pasta /app no container
-
-```docker
+# Mapeando um volume para dentro de uma pasta /app no container
 docker run --name nginx -d --mount type=volume,source=volume_name,target=/app nginx
-```
 
-Matar tudo o que não está sendo usado dos volumes na sua máquina. Isso evita lotação de espaço na sua máquina.
-
-```docker
+# Matar tudo o que não está sendo usado dos volumes na sua máquina. Isso evita lotação de espaço na sua máquina.
 docker volume prune
 ```
 
 ## Trabalhado com imagens
 
-Podemos criar containers a partir de imagens que ficam hospedadas em algum container registry. Por padrão o docker usar o container registry Docker Hub, mas isso não impede de usar outros containers registry ou até o seu próprio.
-
-Baixando uma imagem para a sua máquina
+Podemos criar containers a partir de imagens que ficam hospedadas em algum container registry. Por padrão o docker usar o container registry Docker Hub, mas isso não o impede de usar outros containers registry ou até o seu próprio.
 
 ```docker
+# Baixando uma imagem para a sua máquina
 docker pull image_name
-```
 
-Listando as imagens existentes
-
-```docker
+# Listando as imagens existentes
 docker images
+
+# Removendo uma imagem
+docker rmi image_name
 ```
 
-Removendo imagens. Os : são opcionais e podem indicar uma tag específica que representa a versão da imagem. Por padrão a tag é latest, e se não escrita no comando, ela fica implícita.
+## Criando imagem com o Dockerfile
 
-```docker
-docker rmi image_name:latest
-```
-
-## Dockerfile
-
-Gerando uma imagem. O **_-t_** define qual o nome do repositorio que você quer colocar e o **_._** indica em qual pasta do seu computador existe o Dockerfile.
+Gerando uma imagem. O **_-t_** nomeia o _repository_ e o **_._** indica em qual pasta do seu computador existe o Dockerfile.
 
 ```docker
 docker build -t higosampa/nginx-com-vim .
 ```
+
+Exemplo de um Dockerfile:
+
+```docker
+# Iniciar um Dockerfile com uma imagem base para gerar o container
+FROM nginx:latest
+
+# Definir o ponto de partida ao montar o container, você cairá no dir especificado
+WORKDIR /app
+
+# Comandos que serão executados ao montar o container
+RUN apt-get update && \
+    apt-get install vim -y
+
+# Copia arquivos da máquina para o container
+# O dir html está sendo copiado para dentro do container nginx e está fazendo um replace no dir html que já existia
+COPY html /usr/share/nginx/html
+```
+
+## ENTRYPOINT vs CMD
