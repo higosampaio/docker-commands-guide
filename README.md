@@ -169,7 +169,7 @@ CMD [ "World" ]
 # output: Hello World
 ```
 
-Podemos altearar o CMD da seguinte forma:
+Podemos alterar o CMD da seguinte forma:
 
 ```docker
 docker run --rm higosampa/hello X
