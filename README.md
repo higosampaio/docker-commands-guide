@@ -14,6 +14,9 @@
     <li><a href="#trabalhando-com-imagens">Trabalhando com imagens</a></li>
     <li><a href="#criando-imagem-com-o-dockerfile">Criando imagem com o Dockerfile</a></li>
     <li><a href="#entrypoint-vs-cmd">ENTRYPOINT vs CMD</a></li>
+    <li><a href="#publicando-imagem-no-dockerhub">Publicando imagem no DockerHub</a></li>
+    <li><a href="#networks">Networks</a></li>
+    <li><a href="#otimizando-imagens-utilizando-multistage-building">Otimizando imagens utilizando Multistage Building</a></li>
   </ol>
 </details>
 
