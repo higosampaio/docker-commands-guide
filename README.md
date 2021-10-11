@@ -19,26 +19,45 @@
 
 ## Comandos básicos
 
+Listar containers ativos
+
 ```docker
-# Listar containers ativos
 docker ps
+```
 
-# Listar todos os containers ativos e não ativos
+Listar todos os containers ativos e não ativos
+
+```docker
 docker ps -a
+```
 
-# Levantar um container
+Levantar um container
+
+```docker
 docker start container_id
+```
 
-# Parar um container
+Parar um container
+
+```docker
 docker stop container_id
+```
 
-# Remover um container
+Remover um container
+
+```docker
 docker rm container_id
+```
 
-# Remover com o -f (force) para o caso do container rodando
+Remover com o -f (force) para o caso do container rodando
+
+```docker
 docker rm container_id -f
+```
 
-# Remover todos os containers de uma vez
+Remover todos os containers de uma vez
+
+```docker
 docker rm $(docker ps -a -q) -f
 ```
 
@@ -82,14 +101,21 @@ docker run -d --name nginx -p 8080:80 nginx
 
 Os comandos exec e attach permitem rodar comandos da máquina que afetam diretamente arquivos que estão no escopo do container.
 
+Executar uma listagem de arquivos que está dentro do container
+
 ```docker
-# Executar uma listagem de arquivos que está dentro do container
 docker exec container_name ls
+```
 
-# Executar o bash e manter conexão com modo interativo
+Executar o bash e manter conexão com modo interativo
+
+```docker
 docker exec -it container_name bash
+```
 
-# Executar o bash e manter conexão com modo interativo com o attach
+Executar o bash e manter conexão com modo interativo com o attach
+
+```docker
 docker attach nome_container
 ```
 
@@ -119,17 +145,27 @@ O **_--mount_** dispara um erro dizendo basicamente que não existe diretório x
 
 Quando queremos persistir arquivos dos nossos containers em uma máquina, seja ela local ou não, quando queremos compartilhar esses arquivos entre containers, manter o mesmo tipo de filesystem (Linux Virtual Machine - que o Docker usa), e principalmente quando não sabemos ou não temos controle dos caminhos dos diretórios, usamos o conceito de volume.
 
+Criando um volume
+
 ```docker
-# Criando um volume
 docker volume create volume_name
+```
 
-# Verificando as configurações de um volume
+Verificando as configurações de um volume
+
+```docker
 docker volume inspect volume_name
+```
 
-# Mapeando um volume para dentro de uma pasta /app no container
+Mapeando um volume para dentro de uma pasta /app no container
+
+```docker
 docker run --name nginx -d --mount type=volume,source=volume_name,target=/app nginx
+```
 
-# Matar tudo o que não está sendo usado dos volumes na sua máquina. Isso evita lotação de espaço na sua máquina.
+Matar tudo o que não está sendo usado dos volumes na sua máquina. Isso evita lotação de espaço na sua máquina.
+
+```docker
 docker volume prune
 ```
 
@@ -137,14 +173,21 @@ docker volume prune
 
 Podemos criar containers a partir de imagens que ficam hospedadas em algum container registry. Por padrão o docker usar o container registry Docker Hub, mas isso não o impede de usar outros containers registry ou até o seu próprio.
 
+Baixando uma imagem para a sua máquina
+
 ```docker
-# Baixando uma imagem para a sua máquina
 docker pull image_name
+```
 
-# Listando as imagens existentes
+Listando as imagens existentes
+
+```docker
 docker images
+```
 
-# Removendo uma imagem
+Removendo uma imagem
+
+```docker
 docker rmi image_name
 ```
 
@@ -265,6 +308,5 @@ docker network connect minharede container_name
 ## Otimizando imagens utilizando Multistage Building
 
 A otimização de imagens é comumente utilizada para colocar imagens em ambiente de produção. Quanto mais enxuta a imagem ficar, mais leve e menos vulnerável a falhas ela fica. Geralmente utiliza-se imagens baseadas no Alpine Linux para reduzir o tamanho de uma imagem que você queira otimizar.
-O Multistage Build é uma forma de se trabalhar o build de uma imagem em duas ou mais etapas, e dessa forma podemos fazer um build principal e um secundário baseado no Apine Linux para otimizar.
 
-<a href="laravel/Dockerfile.prod">Exemplo</a>
+O Multistage Build é uma forma de se trabalhar o build de uma imagem em duas ou mais etapas, e dessa forma podemos fazer um build principal e um secundário baseado no Apine Linux para otimizar. Neste <a href="laravel/Dockerfile.prod">Dockerfile</a> há um exemplo.
