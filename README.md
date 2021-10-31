@@ -1,11 +1,10 @@
-# Docker Commands Guide
+# Docker Labs
 
-<!-- TABLE OF CONTENTS -->
 <details open="open">
   <summary>Table of Contents</summary>
   <ol>
     <li><a href="#comandos-básicos">Comandos básicos</a></li>
-    <li><a href="#hello-world">Hello World</a></li>
+    <li><a href="./hello-world/index.md">Rodando um Hello World</a></li>
     <li><a href="#executando-o-ubuntu">Executando o Ubuntu</a></li>
     <li><a href="#publicando-portas-com-o-nginx">Publicando portas com nginx</a></li>
     <li><a href="#executar-diretamente-comandos-em-um-container">Executar diretamente comandos em um container</a></li>
@@ -22,59 +21,15 @@
 
 ## Comandos básicos
 
-Listar containers ativos
-
 ```docker
-docker ps
+docker ps # Listar containers ativos
+docker ps -a # Listar todos os containers ativos e não ativos
+docker start container_id # Levantar um container
+docker stop container_id # Parar um container
+docker rm container_id # Remover um container
+docker rm container_id -f # Remover com o -f (force) para o caso do container rodando
+docker rm $(docker ps -a -q) -f # Remover todos os containers de uma vez
 ```
-
-Listar todos os containers ativos e não ativos
-
-```docker
-docker ps -a
-```
-
-Levantar um container
-
-```docker
-docker start container_id
-```
-
-Parar um container
-
-```docker
-docker stop container_id
-```
-
-Remover um container
-
-```docker
-docker rm container_id
-```
-
-Remover com o -f (force) para o caso do container rodando
-
-```docker
-docker rm container_id -f
-```
-
-Remover todos os containers de uma vez
-
-```docker
-docker rm $(docker ps -a -q) -f
-```
-
-## Hello World
-
-Ao rodar o seguinte comando, o docker procura na sua máquina uma imagem com o nome hello-world para rodar em um container. Caso a imagem não exista, o docker tenta procurar essa imagem no container registry e depois roda num container através do **_run_**.
-
-```docker
-docker run hello-world
-```
-
-Esse hello-world é uma imagem que existe no container registry, portanto, o docker consegue fazer um pulling da imagem para a sua máquina e depois rodar.
-
-O comando **_docker run_** faz com que configurações de ENTRYPOINT ou CMD de uma imagem sejam executados. Em nosso caso, o ENTRYPOINT da hello-world apenas imprime uma mensagem e finaliza o processo.
 
 ## Executando o Ubuntu
 
@@ -100,7 +55,7 @@ docker run -d --name nginx -p 8080:80 nginx
 - **_--name_** (para nomear o container)
 - **_-p_** (aponta a porta 8080 da máquina para a porta 80 do container nginx)
 
-## Executar diretamente comandos em um container
+## Executar comandos diretamente em um container
 
 Os comandos exec e attach permitem rodar comandos da máquina que afetam diretamente arquivos que estão no escopo do container.
 
