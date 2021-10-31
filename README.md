@@ -8,11 +8,10 @@
     <li><a href="./ubuntu/index.md">Executando o Ubuntu</a></li>
     <li><a href="./publishing-doors/index.md">Publicando portas com nginx</a></li>
     <li><a href="./commands-outside/index.md">Executar comandos diretamente em um container</a></li>
-    <li><a href=".bind-mounts/index.md">Bind Mounts</a></li>
-    <li><a href="#trabalhando-com-volumes">Trabalhando com volumes</a></li>
-    <li><a href="#trabalhando-com-imagens">Trabalhando com imagens</a></li>
-    <li><a href="#criando-imagem-com-o-dockerfile">Criando imagem com o Dockerfile</a></li>
-    <li><a href="#entrypoint-vs-cmd">ENTRYPOINT vs CMD</a></li>
+    <li><a href="./bind-mounts/index.md">Bind Mounts</a></li>
+    <li><a href="./volumes/index.md">Trabalhando com volumes</a></li>
+    <li><a href="./imagens/index.md">Trabalhando com imagens</a></li>
+    <li><a href="./entrypoint-vs-cmd/index.md">ENTRYPOINT vs CMD</a></li>
     <li><a href="#publicando-imagem-no-dockerhub">Publicando imagem no DockerHub</a></li>
     <li><a href="#networks">Networks</a></li>
     <li><a href="#otimizando-imagens-utilizando-multistage-building">Otimizando imagens utilizando Multistage Building</a></li>
@@ -29,88 +28,6 @@ docker stop container_id # Parar um container
 docker rm container_id # Remover um container
 docker rm container_id -f # Remover com o -f (force) para o caso do container rodando
 docker rm $(docker ps -a -q) -f # Remover todos os containers de uma vez
-```
-
-## Trabalhando com volumes
-
-Quando queremos persistir arquivos dos nossos containers em uma máquina, seja ela local ou não, quando queremos compartilhar esses arquivos entre containers, manter o mesmo tipo de filesystem (Linux Virtual Machine - que o Docker usa), e principalmente quando não sabemos ou não temos controle dos caminhos dos diretórios, usamos o conceito de volume.
-
-Criando um volume
-
-```docker
-docker volume create volume_name
-```
-
-Verificando as configurações de um volume
-
-```docker
-docker volume inspect volume_name
-```
-
-Mapeando um volume para dentro de uma pasta /app no container
-
-```docker
-docker run --name nginx -d --mount type=volume,source=volume_name,target=/app nginx
-```
-
-Matar tudo o que não está sendo usado dos volumes na sua máquina. Isso evita lotação de espaço na sua máquina.
-
-```docker
-docker volume prune
-```
-
-## Trabalhando com imagens
-
-Podemos criar containers a partir de imagens que ficam hospedadas em algum container registry. Por padrão o docker usar o container registry Docker Hub, mas isso não o impede de usar outros containers registry ou até o seu próprio.
-
-Baixando uma imagem para a sua máquina
-
-```docker
-docker pull image_name
-```
-
-Listando as imagens existentes
-
-```docker
-docker images
-```
-
-Removendo uma imagem
-
-```docker
-docker rmi image_name
-```
-
-## Criando imagem com o Dockerfile
-
-Gerando uma imagem. O **_-t_** nomeia o _repository_ e o **_._** indica em qual pasta do seu computador existe o Dockerfile.
-
-```docker
-docker build -t higosampa/nginx-com-vim .
-```
-
-## ENTRYPOINT vs CMD
-
-O ENTRYPOINT e o CMD são comandos que executam ações ao rodar a imagem. A diferença é que o CMD é um comando variável, podendo ser alterado em tempo de execução e o ENTRYPOINT é um comando fixo. O CMD pode ser usado como parâmetro do ENTRYPOINT.
-
-Criando uma imagem baseada no ubuntu e printando uma mensagem "Hello World".
-
-```docker
-FROM ubuntu:latest
-
-ENTRYPOINT [ "echo", "Hello" ]
-
-CMD [ "World" ]
-
-# output: Hello World
-```
-
-Podemos alterar o CMD da seguinte forma:
-
-```docker
-docker run --rm higosampa/hello X
-
-# output: Hello X
 ```
 
 ## Publicando imagem no DockerHub
