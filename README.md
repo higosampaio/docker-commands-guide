@@ -12,7 +12,7 @@
     <li><a href="./volumes/index.md">Trabalhando com volumes</a></li>
     <li><a href="./imagens/index.md">Trabalhando com imagens</a></li>
     <li><a href="./entrypoint-vs-cmd/index.md">ENTRYPOINT vs CMD</a></li>
-    <li><a href="#publicando-imagem-no-dockerhub">Publicando imagem no DockerHub</a></li>
+    <li><a href="./publishing-dockerhub/index.md">Publicando imagem no DockerHub</a></li>
     <li><a href="#networks">Networks</a></li>
     <li><a href="#otimizando-imagens-utilizando-multistage-building">Otimizando imagens utilizando Multistage Building</a></li>
   </ol>
@@ -21,48 +21,26 @@
 ## Comandos básicos
 
 ```docker
-docker ps # Listar containers ativos
-docker ps -a # Listar todos os containers ativos e não ativos
-docker start container_id # Levantar um container
-docker stop container_id # Parar um container
-docker rm container_id # Remover um container
-docker rm container_id -f # Remover com o -f (force) para o caso do container rodando
-docker rm $(docker ps -a -q) -f # Remover todos os containers de uma vez
-```
+# Listar containers ativos
+docker ps
 
-## Publicando imagem no DockerHub
+# Listar todos os containers ativos e não ativos
+docker ps -a
 
-Criando uma imagem baseada no nginx e modificando a página index.html
+# Levantar um container
+docker start container_id
 
-```docker
-FROM nginx:latest
+# Parar um container
+docker stop container_id
 
-# Copiando o dir html da máquina e sobrescrevendo o dir html do nginx
-COPY html /usr/share/nginx/html
+# Remover um container
+docker rm container_id
 
-# Copiando o entrypoint e o cmd do nginx para deixar a imagem rodando
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["nginx", "-g", "daemon off;"]
-```
+# Remover com o -f (force) para o caso do container rodando
+docker rm container_id -f
 
-Testando a imagem localmente antes de subir
-
-```docker
-# Buildando o imagem
-docker build -t higosampa/nginx-fullcycle .
-
-# Rodando a imagem
-docker run --rm -d -p 8080:80 higosampa/nginx-fullcycle
-```
-
-Publicando a imagem no DockerHub
-
-```docker
-# Primeiro precisamos fazer login no DockerHub
-docker login
-
-# Subindo a imagem
-docker push higosampa/nginx-fullcycle
+# Remover todos os containers de uma vez
+docker rm $(docker ps -a -q) -f
 ```
 
 ## Networks
