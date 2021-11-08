@@ -14,6 +14,8 @@
     <li><a href="./entrypoint-vs-cmd/index.md">ENTRYPOINT vs CMD</a></li>
     <li><a href="./publishing-dockerhub/index.md">Publicando imagem no DockerHub</a></li>
     <li><a href="./networks/index.md">Networks</a></li>
+    <li><a href="./install-framework/index.md">Instalando framework em um container</a></li>
+    <li><a href="./create-app/index.md">Desenvolvendo uma aplicação com infraestrutura no Docker</a></li>
     <li><a href="./multistage-building/index.md">Otimizando imagens</a></li>
   </ol>
 </details>
