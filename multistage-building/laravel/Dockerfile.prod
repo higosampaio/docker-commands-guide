@@ -16,10 +16,18 @@ RUN php composer.phar create-project laravel/laravel laravel
 FROM php:7.4-fpm-alpine
 WORKDIR /var/www
 RUN rm -rf /var/www/html
+
 # Copiando do primeiro build no path /var/www/laravel para . que é o WORKDIR /var/www do segundo build
 COPY --from=builder /var/www/laravel .
+
+# Symbolic link
+# Quando acessar a pasta html, veremos o conteúdo da pasta public
+RUN ln -s public html
+
 RUN chown -R www-data:www-data /var/www
+
 # Expondo a porta 9000 do php-fpm
 EXPOSE 9000
+
 # Comando que irá executar o php. O php ficará escutando no php-fpm.
 CMD ["php-fpm"]
