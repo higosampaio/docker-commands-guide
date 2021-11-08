@@ -13,8 +13,8 @@
     <li><a href="./imagens/index.md">Trabalhando com imagens</a></li>
     <li><a href="./entrypoint-vs-cmd/index.md">ENTRYPOINT vs CMD</a></li>
     <li><a href="./publishing-dockerhub/index.md">Publicando imagem no DockerHub</a></li>
-    <li><a href="#networks">Networks</a></li>
-    <li><a href="#otimizando-imagens-utilizando-multistage-building">Otimizando imagens utilizando Multistage Building</a></li>
+    <li><a href="./networks/index.md">Networks</a></li>
+    <li><a href="./multistage-building/index.md">Otimizando imagens</a></li>
   </ol>
 </details>
 
@@ -42,56 +42,3 @@ docker rm container_id -f
 # Remover todos os containers de uma vez
 docker rm $(docker ps -a -q) -f
 ```
-
-## Networks
-
-As networks possibilitam a comunicação entre containers.
-
-1. Network do tipo **_bridge_**: É o tipo de network padrão e mais comum. Normalmente utilizadas para fazer um container se comunicar com outro.
-
-2. Network do tipo **_host_**: Permite mesclar a network do docker com a network do host do docker (minha máquina). A minha máquina terá a capacidade de acessar uma porta direta no container sem precisar fazer exposição de porta.
-
-3. Network do tipo **_overlay_**: Permite a comunicação de containers entre máquinas diferentes. Geralmente utilizado em ambientes de maior escalabilidade.
-
-4. Network do tipo macvlan: Permite setar um macaddress em um container e pode fazer parecer que é uma network que está plugada na sua rede.
-
-5. Network do tipo none: Define que não terá nenhuma rede e garante que o container irá rodar de forma isolada.
-
-### Trabalhando com bridge
-
-Verificando os comandos disponíveis para trabalhar com networks
-
-```docker
-docker networks
-```
-
-Identificando os containers que fazem parte de uma network
-
-```docker
-docker network inspect bridge
-```
-
-Criando uma nova network
-
-```docker
-docker network create --driver bridge minharede
-```
-
-Criando containers na mesma rede
-
-```docker
-docker run -dit --name ubuntu1 --network minharede bash
-docker run -dit --name ubuntu2 --network minharede bash
-```
-
-Conectando um container já existente em uma rede
-
-```docker
-docker network connect minharede container_name
-```
-
-## Otimizando imagens utilizando Multistage Building
-
-A otimização de imagens é comumente utilizada para colocar imagens em ambiente de produção. Quanto mais enxuta a imagem ficar, mais leve e menos vulnerável a falhas ela fica. Geralmente utiliza-se imagens baseadas no Alpine Linux para reduzir o tamanho de uma imagem que você queira otimizar.
-
-O Multistage Build é uma forma de se trabalhar o build de uma imagem em duas ou mais etapas, e dessa forma podemos fazer um build principal e um secundário baseado no Apine Linux para otimizar. Neste <a href="laravel/Dockerfile.prod">Dockerfile</a> há um exemplo.
