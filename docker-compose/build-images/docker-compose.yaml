@@ -3,7 +3,7 @@ version: "3"
 services:
   laravel:
     build:
-      context: ../multistage-building/laravel
+      context: ../../multistage-building/laravel
       dockerfile: Dockerfile.prod
     image: higosampaio/laravel:prod
     container_name: laravel
@@ -12,7 +12,7 @@ services:
 
   nginx:
     build:
-      context: ../nginx
+      context: ../../nginx
       dockerfile: Dockerfile.prod
     image: higosampaio/nginx:prod
     container_name: nginx
