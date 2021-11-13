@@ -7,16 +7,14 @@
     <li><a href="#executando-o-ubuntu">Executando o Ubuntu</a></li>
     <li><a href="#publicando-portas-com-nginx">Publicando portas com nginx</a></li>
     <li><a href="#executar-comandos-diretamente-em-um-container">Executar comandos diretamente em um container</a></li>
-    <li><a href="./bind-mounts/index.md">Bind Mounts</a></li>
-    <li><a href="./volumes/index.md">Trabalhando com volumes</a></li>
-    <li><a href="./imagens/index.md">Trabalhando com imagens</a></li>
-    <li><a href="./entrypoint-vs-cmd/index.md">ENTRYPOINT vs CMD</a></li>
-    <li><a href="./publishing-dockerhub/index.md">Publicando imagem no DockerHub</a></li>
-    <li><a href="./networks/index.md">Networks</a></li>
-    <li><a href="./install-framework/index.md">Instalando framework em um container</a></li>
-    <li><a href="./create-app/index.md">Desenvolvendo uma aplicação com infraestrutura no Docker</a></li>
-    <li><a href="./multistage-building/index.md">Otimizando imagens</a></li>
-    <li><a href="./docker-compose">Iniciando com docker-compose</a></li>
+    <li><a href="#bind-mounts">Bind Mounts</a></li>
+    <li><a href="#trabalhando-com-volumes">Trabalhando com volumes</a></li>
+    <li><a href="#trabalhando-com-imagens">Trabalhando com imagens</a></li>
+    <li><a href="#entrypoint-vs-cmd">ENTRYPOINT vs CMD</a></li>
+    <li><a href="#publicando-imagem-no-dockerhub">Publicando imagem no DockerHub</a></li>
+    <li><a href="#networks">Networks</a></li>
+    <li><a href="#multistage-building">Multistage Building</a></li>
+    <li><a href="#reverse-proxy">Reverse Proxy</a></li>
   </ol>
 </details>
 
@@ -76,7 +74,7 @@ Executar o bash e manter conexão com modo interativo com o attach
 docker attach nome_container
 ```
 
-## Trabalhando com Bind Mounts
+## Bind Mounts
 
 Bind Mounts serve para refletir arquivos da sua máquina local para o container. Dessa forma você mantem a integridade do arquivo caso o container não exista mais.
 
@@ -157,3 +155,159 @@ docker build -t higosampa/nginx-com-vim .
 ```
 
 O **_-t_** nomeia o _repository_ e o **_._** indica em qual pasta do seu computador existe o Dockerfile.
+
+## ENTRYPOINT vs CMD
+
+O ENTRYPOINT e o CMD são comandos que executam ações ao rodar a imagem. A diferença é que o CMD é um comando variável, podendo ser alterado em tempo de execução e o ENTRYPOINT é um comando fixo. O CMD pode ser usado como parâmetro do ENTRYPOINT.
+
+Criando uma imagem baseada no ubuntu e printando uma mensagem "Hello World".
+
+```docker
+FROM ubuntu:latest
+
+ENTRYPOINT [ "echo", "Hello" ]
+
+CMD [ "World" ]
+
+# output: Hello World
+```
+
+Podemos alterar o CMD da seguinte forma:
+
+```docker
+docker run --rm higosampa/hello X
+
+# output: Hello X
+```
+
+## Publicando imagem no DockerHub
+
+Exemplo de Dockerfile para criar uma imagem baseada no nginx e modificando a página index.html.
+
+```docker
+FROM nginx:latest
+
+# Copiando o dir html da máquina local e sobrescrevendo o dir html do nginx
+COPY html /usr/share/nginx/html
+
+# Executando o entrypoint e o cmd que o nginx precisa para deixar a imagem rodando
+ENTRYPOINT ["/docker-entrypoint.sh"]
+CMD ["nginx", "-g", "daemon off;"]
+```
+
+Testando a imagem localmente antes de subir
+
+```docker
+# Buildando o imagem
+docker build -t higosampa/nginx-fullcycle .
+
+# Rodando a imagem
+docker run --rm -d -p 8080:80 higosampa/nginx-fullcycle
+```
+
+Publicando a imagem no DockerHub
+
+```docker
+# Primeiro precisamos fazer login no DockerHub
+docker login
+
+# Subindo a imagem
+docker push higosampa/nginx-fullcycle
+```
+
+## Networks
+
+As networks possibilitam a comunicação entre containers.
+
+1. Network do tipo **_bridge_**: É o tipo de network padrão e mais comum. Normalmente utilizadas para fazer um container se comunicar com outro.
+
+2. Network do tipo **_host_**: Permite mesclar a network do docker com a network do host do docker (minha máquina). A minha máquina terá a capacidade de acessar uma porta direta no container sem precisar fazer exposição de porta.
+
+3. Network do tipo **_overlay_**: Permite a comunicação de containers entre máquinas diferentes. Geralmente utilizado em ambientes de maior escalabilidade.
+
+4. Network do tipo macvlan: Permite setar um macaddress em um container e pode fazer parecer que é uma network que está plugada na sua rede.
+
+5. Network do tipo none: Define que não terá nenhuma rede e garante que o container irá rodar de forma isolada.
+
+### Trabalhando com bridge
+
+Verificando os comandos disponíveis para trabalhar com networks
+
+```docker
+docker networks
+```
+
+Identificando os containers que fazem parte de uma network
+
+```docker
+docker network inspect bridge
+```
+
+Criando uma nova network
+
+```docker
+docker network create --driver bridge minharede
+```
+
+Criando containers na mesma rede
+
+```docker
+docker run -dit --name ubuntu1 --network minharede bash
+docker run -dit --name ubuntu2 --network minharede bash
+```
+
+Conectando um container já existente em uma rede
+
+```docker
+docker network connect minharede container_name
+```
+
+## Multistage Building
+
+A otimização de imagens é comumente utilizada para colocar imagens em ambiente de produção. Quanto mais enxuta a imagem ficar, mais leve e menos vulnerável a falhas ela fica. Geralmente utiliza-se imagens baseadas no Alpine Linux para reduzir o tamanho de uma imagem que você queira otimizar.
+
+O Multistage Build é uma forma de se trabalhar o build de uma imagem em duas ou mais etapas, e dessa forma podemos fazer um build principal e um secundário baseado no Apine Linux para otimizar. Neste <a href="laravel/Dockerfile.prod">Dockerfile</a> há um exemplo.
+
+## Reverse Proxy
+
+### 1. Criando imagem nginx
+
+Acesse o dir no qual o Dockerfile está inserido e rode o comando:
+
+```docker
+docker build -t  higosampaio/nginx:prod . -f Dockerfile.prod
+```
+
+### 2. Criando imagem laravel
+
+Acesse o dir no qual o Dockerfile está inserido e rode o comando:
+
+```docker
+docker build -t higosampaio/laravel:prod . -f Dockerfile.prod
+```
+
+### 3. Criando uma network para os containers trabalharem em uma mesma rede
+
+```docker
+docker network create laranet
+```
+
+### 3. Levantando a imagem do laravel na network criada
+
+```docker
+docker run -d --network laranet --name laravel higosampa/laravel:prod
+```
+
+### 4. Levantando a imagem do nginx na network
+
+```docker
+docker run -d --network laranet --name nginx -p 8080:80 higosampaio/nginx:prod
+```
+
+### 5. Acessando o nginx
+
+```
+localhost:8080
+```
+
+Obs. Caso o projeto em laravel tenha imagens (.png, .jpg, etc), será preciso copiar os arquivos pra dentro do nginx porque o php-fpm não vai servir as imagens.
