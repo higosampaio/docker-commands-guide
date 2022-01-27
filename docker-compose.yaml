@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  app:
+    build:
+      context: node
+    container_name: app
+    # O Dockerize vai garantir que o app espere o db completar a subida.
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 20s docker-entrypoint.sh
+    networks:
+      - node-network
+    volumes:
+      - ./node:/usr/src/app
+    tty: true
+    ports:
+      - "3000:3000"
+    # Define a ordem de subida dos containers. Aqui o db vai iniciar a subida antes do app,
+    # mas não garante que vai esperar o bd completar a subida pra iniciar. Isso em alguns
+    # casos pode ser um problema. Por isso usamos o Dockerize.
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    command: --innodb-use-native-aio=0
+    container_name: mysql
+    restart: always
+    tty: true
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      - MYSQL_DATABASE=nodedb
+      - MYSQL_ROOT_PASSWORD=root
+    networks:
+      - node-network
+
+networks:
+  node-network:
+    driver: bridge
